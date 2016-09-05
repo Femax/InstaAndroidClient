@@ -1,0 +1,67 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "ru.advantum.fedosov.insta"
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        jackOptions {
+            enabled true
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+ext {
+    supportLibVersion = '23.4.0'
+    googlePlayVersion = '9.0.1'
+    icepickVersion = '3.2.0'
+}
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'com.squareup.okhttp3:mockwebserver:3.2.0'
+    androidTestCompile 'junit:junit:4.12'
+    androidTestCompile 'org.robolectric:robolectric:3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'net.danlew:android.joda:2.9.3'
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.annimon:stream:1.0.2'
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.google.android.gms:play-services-maps:${googlePlayVersion}"
+    compile "com.google.android.gms:play-services-location:${googlePlayVersion}"
+    compile "com.google.android.gms:play-services-auth:${googlePlayVersion}"
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.googlecode.libphonenumber:libphonenumber:5.5'
+    compile 'com.squareup.okhttp:okhttp:2.7.5'
+    compile 'com.squareup.picasso:picasso:2.5.0'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'com.j256.ormlite:ormlite-core:4.48'
+    compile 'com.sothree.slidinguppanel:library:3.3.0'
+    compile 'io.reactivex:rxandroid:1.0.1'
+    compile 'io.reactivex:rxjava:1.0.14'
+    compile 'com.squareup.retrofit:retrofit:2.0.0-beta2'
+    compile 'com.squareup.retrofit:adapter-rxjava:2.0.0-beta2'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.okhttp:logging-interceptor:2.7.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+}

@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Insta</string>
+
+    <!-- Strings related to login -->
+    <string name="login_user_name_hint">Email</string>
+    <string name="login_password_hint">Password</string>
+    <string name="login_error_invalid_password">Wrong passwod</string>
+    <string name="login_error_incorrect_password">Incorrect password</string>
+    <string name="login_error_field_required">Fireld required</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="pref_server">pref_server</string>
+    <string name="server">localhost:3002</string>
+    <string name="message_no_network">No network</string>
+    <string name="message_failure">failure</string>
+</resources>
