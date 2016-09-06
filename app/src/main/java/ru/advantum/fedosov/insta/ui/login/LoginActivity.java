@@ -1,29 +1,31 @@
-package ru.advantum.fedosov.insta.ui;
+package ru.advantum.fedosov.insta.ui.login;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.io.IOException;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import ru.advantum.fedosov.insta.R;
 import ru.advantum.fedosov.insta.annotation.ActivityRef;
 import ru.advantum.fedosov.insta.event.LoginEvent;
-import ru.advantum.fedosov.insta.model.Repo;
 import ru.advantum.fedosov.insta.model.RestClient;
+import ru.advantum.fedosov.insta.model.service.UserJson;
 import ru.advantum.fedosov.insta.rule.LoginRule;
 import ru.advantum.fedosov.insta.ui.base.BaseAbstractActivity;
+import ru.advantum.fedosov.insta.ui.users.UsersActivity;
 import ru.advantum.fedosov.insta.util.PrefUtils;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -33,7 +35,7 @@ import rx.schedulers.Schedulers;
  * A login screen that offers login via email/password.
  */
 @ActivityRef(resource = R.layout.activity_login, knifeEnabled = true, busEnabled = true)
-public class LoginActivity extends BaseAbstractActivity {
+public class LoginActivity extends BaseAbstractActivity implements LoginView {
 
     private static final String STATE_EMAIL = "STATE_EMAIL";
     private static final String STATE_PASS = "STATE_PASS";
@@ -46,6 +48,11 @@ public class LoginActivity extends BaseAbstractActivity {
     protected CheckBox mRememberMeCheckBox;
     @Bind(R.id.data)
     protected TextView data;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @SuppressLint("MissingSuperCall")
@@ -65,6 +72,9 @@ public class LoginActivity extends BaseAbstractActivity {
         }
 
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -98,53 +108,79 @@ public class LoginActivity extends BaseAbstractActivity {
         else {
             showProgressDialog(true);
             LoginRule.login(email, password);
-            RestClient.getInstance().getModelsObservable().subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Subscriber<List<Repo>>() {
-                @Override
-                public void onCompleted() {
-                    showProgressDialog(false);
-                }
+            RestClient.getInstance().getModelsObservable()
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<UserJson>() {
 
-                @Override
-                public void onError(Throwable e) {
+                        @Override
+                        public void onCompleted() {
+                            showProgressDialog(false);
+                        }
 
-                }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("Login", "1", e);
+                        }
 
-                @Override
-                public void onNext(List<Repo> repos) {
-                    data.setText(repos.toString());
-                }
-            });
+                        @Override
+                        public void onNext(UserJson userJson) {
+
+                            Log.d("ok", userJson.toString());
+                            PrefUtils.putString(getString(R.string.pref_token), userJson.getToken());
+                            startActivity(new Intent(getBaseContext(), UsersActivity.class));
+                        }
+                    });
 
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onLoginEvent(LoginEvent event) {
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onLoginEvent(LoginEvent event) {
+//        showProgressDialog(false);
+//        switch (event.getType()) {
+//            case SUCCESS:
+//                LoginRule.onSuccessLogin(this, mEmailView.getText().toString(),
+//                        mPasswordView.getText().toString(), false);
+//                break;
+//            case FAILURE:
+//                Toast.makeText(this, getString(R.string.message_failure), Toast.LENGTH_SHORT).show();
+//                PrefUtils.remove(R.string.pref_server);
+//                break;
+//            case NETWORK:
+//                Toast.makeText(this, getString(R.string.message_no_network), Toast.LENGTH_SHORT).show();
+//                PrefUtils.remove(R.string.pref_server);
+//                break;
+//            case INVALID_INPUT:
+//                mPasswordView.setError(getString(R.string.login_error_incorrect_password));
+//                PrefUtils.remove(R.string.pref_server);
+//                break;
+//            default:
+//                Toast.makeText(this, "idk", Toast.LENGTH_SHORT).show();
+//                PrefUtils.remove(R.string.pref_server);
+//                break;
+//        }
+//    }
+
+    @Override
+    public void showProgress() {
+        showProgressDialog(true);
+    }
+
+    @Override
+    public void hideProgress() {
         showProgressDialog(false);
-        switch (event.getType()) {
-            case SUCCESS:
-                LoginRule.onSuccessLogin(this, mEmailView.getText().toString(),
-                        mPasswordView.getText().toString(), false);
-                break;
-            case FAILURE:
-                Toast.makeText(this, getString(R.string.message_failure), Toast.LENGTH_SHORT).show();
-                PrefUtils.remove(R.string.pref_server);
-                break;
-            case NETWORK:
-                Toast.makeText(this, getString(R.string.message_no_network), Toast.LENGTH_SHORT).show();
-                PrefUtils.remove(R.string.pref_server);
-                break;
-            case INVALID_INPUT:
-                mPasswordView.setError(getString(R.string.login_error_incorrect_password));
-                PrefUtils.remove(R.string.pref_server);
-                break;
-            default:
-                Toast.makeText(this, "idk", Toast.LENGTH_SHORT).show();
-                PrefUtils.remove(R.string.pref_server);
-                break;
-        }
     }
 
+    @Override
+    public void setUsernameError() {
+        mEmailView.setError("Не верный логин");
+    }
+
+    @Override
+    public void setPasswordError() {
+        mPasswordView.setError("Не верный пароль");
+    }
 
 }
 

@@ -1,34 +1,40 @@
 package ru.advantum.fedosov.insta.model;
 
-import java.util.ArrayList;
+import android.util.Log;
+
+import java.util.HashMap;
 import java.util.List;
 
-import retrofit2.GsonConverterFactory;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import ru.advantum.fedosov.insta.model.service.GitHubService;
+import retrofit2.converter.gson.GsonConverterFactory;
+import ru.advantum.fedosov.insta.R;
+import ru.advantum.fedosov.insta.model.service.InstaService;
+import ru.advantum.fedosov.insta.model.service.LoginJson;
+import ru.advantum.fedosov.insta.model.service.UserJson;
+import ru.advantum.fedosov.insta.util.PrefUtils;
 import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by fedosov on 9/6/16.
  */
 public class RestClient {
-    private static final String BASE_URL = "http://api.openweathermap.org/";
-    private static Observable<ArrayList<Repo>> observableModelsList;
-    private static GitHubService apiService;
+
+    private static InstaService apiService;
     private static RestClient instance;
 
     private RestClient() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("http://10.0.2.2:80/")
+
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        apiService = retrofit.create(GitHubService.class);
+        apiService = retrofit.create(InstaService.class);
     }
 
     public static RestClient getInstance() {
@@ -39,12 +45,16 @@ public class RestClient {
         return instance;
     }
 
-    private  GitHubService getWeatherService() {
+    private InstaService getWeatherService() {
         return apiService;
     }
 
-    public Observable<List<Repo>> getModelsObservable() {
+    public Observable<UserJson> getModelsObservable() {
+        RequestBody body = RequestBody.create(MediaType.parse("text/plain"),"shit");
+        return  apiService.loginToken(new LoginJson("asd","asd"));
+    }
 
-        return apiService.listRepos("femax");
+    public Observable<User> getUsers(){
+       return   apiService.getUsers(PrefUtils.getString(R.string.pref_token));
     }
 }
