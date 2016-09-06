@@ -10,10 +10,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import butterknife.InjectView;
-import ru.advantum.bigbrother.android.R;
-import ru.advantum.bigbrother.android.annotation.FragmentRef;
-import ru.advantum.bigbrother.android.model.Vehicle;
+import butterknife.Bind;
+import ru.advantum.fedosov.insta.R;
+import ru.advantum.fedosov.insta.annotation.FragmentRef;
 
 /**
  * Created by yurchenko on 31.05.2016.
@@ -26,7 +25,6 @@ public abstract class BaseMapFragment extends BaseAbstractFragment implements On
 
     protected final static String TAG = "MonitorFragment";
     protected Callback mCallback;
-    @InjectView(R.id.google_map)
     protected MapView mMapView;
 
     private GoogleMap mMap;
@@ -108,11 +106,7 @@ public abstract class BaseMapFragment extends BaseAbstractFragment implements On
 
     public interface Callback {
         void onMapReady(GoogleMap googleMap);
-//        void onClusterClick(Cluster<Vehicle> cluster);
-        void onVehicleClick(Vehicle vehicle);
-        void updateMenu(int size);
-        void onMapClick();
-        void startUserLocationUpdates();
+
     }
 
     protected GoogleMap getMap() {

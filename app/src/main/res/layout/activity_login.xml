@@ -78,6 +78,13 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
+
+            <TextView
+                android:id="@+id/data"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
     </ScrollView>
+
+
 </FrameLayout>

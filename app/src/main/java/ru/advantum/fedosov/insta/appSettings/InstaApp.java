@@ -4,6 +4,8 @@ import android.app.Application;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 
+import ru.advantum.fedosov.insta.util.PrefUtils;
+
 /**
  * Created by fedosov on 9/5/16.
  */
@@ -24,7 +26,7 @@ public class InstaApp extends Application {
         super.onCreate();
         if (sInstance == null) sInstance = this;
         JodaTimeAndroid.init(this);
-
+        PrefUtils.init(getBaseContext());
     }
 
 }

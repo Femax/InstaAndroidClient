@@ -12,8 +12,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.ButterKnife;
-import ru.advantum.bigbrother.android.annotation.FragmentRef;
-import ru.advantum.bigbrother.android.event.BaseEvent;
+import ru.advantum.fedosov.insta.annotation.FragmentRef;
+import ru.advantum.fedosov.insta.event.BaseEvent;
+
 
 /**
  * Base fragment implementation. Use this class for auto apply basic functionality
@@ -55,7 +56,7 @@ public abstract class BaseAbstractFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (fragmentRef.knifeEnabled()) ButterKnife.inject(this, view);
+        if (fragmentRef.knifeEnabled()) ButterKnife.bind(this, view);
         if (fragmentRef.busEnabled()) EventBus.getDefault().register(this);
     }
 
