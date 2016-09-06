@@ -12,4 +12,7 @@ public interface LoginView {
 
     void setPasswordError();
 
+    void navigateToOtherActivity();
+
+    void onError();
 }

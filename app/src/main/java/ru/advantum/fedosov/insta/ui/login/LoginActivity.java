@@ -3,33 +3,17 @@ package ru.advantum.fedosov.insta.ui.login;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.Bind;
 import butterknife.OnClick;
 import ru.advantum.fedosov.insta.R;
 import ru.advantum.fedosov.insta.annotation.ActivityRef;
-import ru.advantum.fedosov.insta.event.LoginEvent;
-import ru.advantum.fedosov.insta.model.RestClient;
-import ru.advantum.fedosov.insta.model.service.UserJson;
 import ru.advantum.fedosov.insta.rule.LoginRule;
 import ru.advantum.fedosov.insta.ui.base.BaseAbstractActivity;
-import ru.advantum.fedosov.insta.ui.users.UsersActivity;
+import ru.advantum.fedosov.insta.ui.users.UserInfoActivity;
 import ru.advantum.fedosov.insta.util.PrefUtils;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * A login screen that offers login via email/password.
@@ -46,14 +30,8 @@ public class LoginActivity extends BaseAbstractActivity implements LoginView {
     protected EditText mPasswordView;
     @Bind(R.id.login_remember_me)
     protected CheckBox mRememberMeCheckBox;
-    @Bind(R.id.data)
-    protected TextView data;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
+    private LoginPresenter mLoginPresenter;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -70,11 +48,8 @@ public class LoginActivity extends BaseAbstractActivity implements LoginView {
             mEmailView.setText(savedInstanceState.getString(STATE_EMAIL));
             mPasswordView.setText(savedInstanceState.getString(STATE_PASS));
         }
+        mLoginPresenter = new LoginPresenter(this);
 
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -89,50 +64,10 @@ public class LoginActivity extends BaseAbstractActivity implements LoginView {
     public void attemptLogin() {
         mEmailView.setError(null);
         mPasswordView.setError(null);
-        PrefUtils.putString(R.string.pref_server, getString(R.string.server));
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-        boolean cancel = false;
-        View focusView = null;
-        if (LoginRule.isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.login_error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
-        if (LoginRule.isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.login_error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        }
-        if (cancel) focusView.requestFocus();
-        else {
-            showProgressDialog(true);
-            LoginRule.login(email, password);
-            RestClient.getInstance().getModelsObservable()
-                    .subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Subscriber<UserJson>() {
+        mLoginPresenter.login(email, password);
 
-                        @Override
-                        public void onCompleted() {
-                            showProgressDialog(false);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("Login", "1", e);
-                        }
-
-                        @Override
-                        public void onNext(UserJson userJson) {
-
-                            Log.d("ok", userJson.toString());
-                            PrefUtils.putString(getString(R.string.pref_token), userJson.getToken());
-                            startActivity(new Intent(getBaseContext(), UsersActivity.class));
-                        }
-                    });
-
-        }
     }
 
 //    @Subscribe(threadMode = ThreadMode.MAIN)
@@ -180,6 +115,16 @@ public class LoginActivity extends BaseAbstractActivity implements LoginView {
     @Override
     public void setPasswordError() {
         mPasswordView.setError("Не верный пароль");
+    }
+
+    @Override
+    public void navigateToOtherActivity() {
+        startActivity(new Intent(this, UserInfoActivity.class));
+    }
+
+    @Override
+    public void onError() {
+
     }
 
 }

@@ -1,12 +1,9 @@
 package ru.advantum.fedosov.insta.rule;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import ru.advantum.fedosov.insta.R;
-import ru.advantum.fedosov.insta.ui.InfoUserActivity;
 import ru.advantum.fedosov.insta.util.AsyncUtils;
 import ru.advantum.fedosov.insta.util.PrefUtils;
 
@@ -46,14 +43,6 @@ public final class LoginRule extends AbstractRule {
         AsyncUtils.login(email, password);
     }
 
-    public static void onSuccessLogin(Activity activity, String email, String password, boolean keepSession) {
-        if (PrefUtils.getBoolean(R.string.pref_remember_login_details)) {
-            PrefUtils.putString(R.string.pref_login_email, email);
-            PrefUtils.putString(R.string.pref_login_password, password);
-        }
-        activity.startActivity(new Intent(activity, InfoUserActivity.class));
-        activity.finish();
-    }
 
     public static void onStartLogin() {
 
