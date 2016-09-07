@@ -43,7 +43,6 @@ public class UserInfoPresenter {
                     public void onNext(User user) {
                         mUserInfoView.onShowData(user);
                         unsubscribe();
-
                     }
                 });
 
