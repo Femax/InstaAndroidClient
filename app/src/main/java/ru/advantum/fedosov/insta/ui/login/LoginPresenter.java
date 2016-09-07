@@ -1,6 +1,9 @@
 package ru.advantum.fedosov.insta.ui.login;
 
 import android.util.Log;
+import android.util.TimeUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import ru.advantum.fedosov.insta.R;
 import ru.advantum.fedosov.insta.model.RestClient;
@@ -22,7 +25,6 @@ public class LoginPresenter {
     }
 
     public void login(String email, String password) {
-        mLoginView.showProgress();
         if (LoginRule.isPasswordValid(password)) {
                 onPasswordError();
         }
@@ -31,20 +33,26 @@ public class LoginPresenter {
         }
 
 
-
+        /**Не знаю где правильно распалогать их если нет бд.Конечно как вариант можно создать RxJavaUtils но нормально ли это?**/
         RestClient.getInstance().getModelsObservable()
                 .subscribeOn(Schedulers.newThread())
+                .debounce(150, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserJson>() {
 
                     @Override
                     public void onCompleted() {
-                        mLoginView.hideProgress();
+
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        onLoginError();
+                        try {
+                            onLoginError();
+                        }
+                        catch (Throwable e2){
+                            Log.d("LoginPresenter",e2.getMessage());
+                        }
                     }
 
                     @Override
@@ -53,6 +61,7 @@ public class LoginPresenter {
                         Log.d("ok", userJson.toString());
                         PrefUtils.putString(R.string.pref_token, userJson.getToken());
                         mLoginView.navigateToOtherActivity();
+                        unsubscribe();
                     }
                 });
     }

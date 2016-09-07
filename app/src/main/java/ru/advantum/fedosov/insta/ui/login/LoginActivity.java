@@ -120,6 +120,7 @@ public class LoginActivity extends BaseAbstractActivity implements LoginView {
     @Override
     public void navigateToOtherActivity() {
         startActivity(new Intent(this, UserInfoActivity.class));
+        finish();
     }
 
     @Override
