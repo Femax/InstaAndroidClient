@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_fragment"
-        android:name="ru.advantum.fedosov.insta.ui.base.NavigationFragment"
+        android:name="ru.fedosov.insta.ui.base.NavigationFragment"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start" />
