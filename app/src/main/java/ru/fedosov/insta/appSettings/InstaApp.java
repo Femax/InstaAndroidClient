@@ -2,7 +2,6 @@ package ru.fedosov.insta.appSettings;
 
 import android.app.Application;
 
-import net.danlew.android.joda.JodaTimeAndroid;
 
 import ru.fedosov.insta.util.PrefUtils;
 
@@ -25,7 +24,6 @@ public class InstaApp extends Application {
     public void onCreate() {
         super.onCreate();
         if (sInstance == null) sInstance = this;
-        JodaTimeAndroid.init(this);
         PrefUtils.init(getBaseContext());
     }
 
